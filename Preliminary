@@ -1,0 +1,41 @@
+#Preliminary
+
+A debugger have 2 majors roles:
+1. start a process and debug it (one way can be done by settings breakpoints in the code lines), 
+2. be attached to an existing process
+
+To program a debugger, we have to start by the services given by our operating system linux and the compiler gcc for the c code sources. This is made possible using the ptrace system call.
+
+
+* In Linux manual:
+
+PTRACE(2)                  Linux Programmer's Manual                 PTRACE(2)
+
+NAME
+       ptrace - process trace
+
+SYNOPSIS
+       #include <sys/ptrace.h>
+
+       long ptrace(enum __ptrace_request request, pid_t pid,
+                   void *addr, void *data);
+
+DESCRIPTION
+       The  ptrace()  system  call  provides a means by which one process (the
+       "tracer") may observe and control the execution of another process (the
+       "tracee"),  and  examine  and change the tracee's memory and registers.
+       It is primarily used to implement breakpoint debugging and system  call
+       tracing.
+
+       A tracee first needs to be attached to the tracer.  Attachment and sub‐
+       sequent commands are per thread:  in  a  multithreaded  process,  every
+       thread  can  be  individually  attached  to  a  (potentially different)
+       tracer, or  left  not  attached  and  thus  not  debugged.   Therefore,
+       "tracee" always means "(one) thread", never "a (possibly multithreaded)
+       process".  Ptrace commands are always sent to a specific tracee using a
+       call of the form
+
+           ptrace(PTRACE_foo, pid, ...)
+
+       where pid is the thread ID of the corresponding Linux thread.
+
