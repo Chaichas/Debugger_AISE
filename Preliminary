@@ -1,4 +1,4 @@
-#Preliminary
+# Preliminary
 
 A debugger have 2 majors roles:
 1. start a process and debug it (one way can be done by settings breakpoints in the code lines), 
@@ -39,3 +39,7 @@ DESCRIPTION
 
        where pid is the thread ID of the corresponding Linux thread.
 
+
+* The idea is to have code with:
+- The child process executing a pre-defined commands that the user creates,
+- The parent process tracing the child.
