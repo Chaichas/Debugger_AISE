@@ -31,4 +31,4 @@ test_program: program.c
  
 .PHONY: clean
 clean:
-	rm -Rf *~ Debug_library.i Breakpoint.g *.i *.g
+	rm -Rf *~ Debug_library.i Breakpoint.g *.i *.g *.o
