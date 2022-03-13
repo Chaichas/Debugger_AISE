@@ -14,7 +14,7 @@ LFLAGS = -L. -ldebug
 # Proper directories 
 SRCDIR = lib
 
-
+ADDR = `objdump -d program | grep print_hello | head -n 1 | awk '{print $1;}'`
  
 all: Breakpoint.g Debug_library.i
 
@@ -26,6 +26,8 @@ Debug_library.i: ${SRCDIR}/Breakpoint_process.c ${SRCDIR}/Breakpoint_process.h $
 Breakpoint.g: Breakpoint.c
 	$(LINKER) $(CFLAGS) -O -c Breakpoint.c
 
+test_program: program.c
+	$(CC) $(CCFLAGS) $^ -o $@
  
 .PHONY: clean
 clean:
