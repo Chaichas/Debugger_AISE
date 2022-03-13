@@ -22,6 +22,7 @@ void debugger_run(pid_t pid)
 	
 }
 
+
 int main(int argc, char* argv)
 {
 	..
