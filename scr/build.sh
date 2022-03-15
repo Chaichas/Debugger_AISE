@@ -6,7 +6,12 @@
 objdump -p File | grep 'NEEDED'
 
 
-#display the values of environment variables
+#Display the values of environment variables
 #Reference: https://www.cyberciti.biz/faq/linux-list-all-environment-variables-env-command/
  
 printenv
+
+
+#Display all available functions
+#Reference: https://stackoverflow.com/questions/4471364/how-do-i-list-the-functions-defined-in-my-shell
+set | grep " ()"
