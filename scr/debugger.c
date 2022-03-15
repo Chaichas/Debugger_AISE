@@ -49,6 +49,7 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
   if (child==0) 
     function_child(path, argv);
   else if (child> 0)
+    uint64_t adresse = (uint64_t) strtol(path2, NULL, 16);
     function_debugger(child,uint64_t adresse);
   
   else {
