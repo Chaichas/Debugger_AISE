@@ -33,7 +33,27 @@ printf(stdout,"debugger started\n");
     printf(stdout,"breakpoint created\n");
     ptrace(PTRACE_CONT, child_pid, 0, 0);
     wait(0);
+ while (1) {
+       
+        struct user_regs_struct regs;
+        ptrace(PTRACE_GETREGS, child_pid, 0, &regs);
+        printf(stdout,"child stopped at breakpoint. EIP = %p\n", regs.rip);
+        printf(stdout,"resuming\n");
+        
+        int rc = breakpoint_resume(child_pid, bp);
 
+        switch(rc) {
+            case 0;
+            printf(stdout,"child exited\n");
+            break;
+        
+            case 1;
+            continue;
+            
+            default :
+            printf(stdout,"unexpected: %d\n", rc);
+            break;
+        }
     }
 
     breakpoint_end(bp);
