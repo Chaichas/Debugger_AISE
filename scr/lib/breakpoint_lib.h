@@ -8,5 +8,6 @@ struct debug_breakpoint_type {
 }; 
 
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp);
+void breakpoint_false(pid_t pid, debug_breakpoint* breakp);
 
 #endif
