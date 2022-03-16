@@ -8,4 +8,4 @@ void function_child(const char *path, char *const argv[]);
 void function_debugger(pid_t pid, uint64_t adresse);
 
 
-void dbugging_exec(const char *path, char *const argv[]);
+void dbugging_exec(const char *path,const char *path2, char *const argv[]);
