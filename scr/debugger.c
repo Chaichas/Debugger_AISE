@@ -14,6 +14,8 @@
 
 //---------------- struct of tracer ----------------
 
+int backtrace (pid_t pid){}
+
 void function_child(const char *path, char *const argv[])
 {
   ptrace(PTRACE_TRACEME, 0, 0, 0);
@@ -71,7 +73,7 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
   else if (child> 0)
     uint64_t adresse = (uint64_t) strtol(path2, NULL, 16);
     function_debugger(child,uint64_t adresse);
-  
+    
   else {
     perror("fork");
   }
