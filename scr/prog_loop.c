@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <string.h>
 
 //Function say_hello, which we will create before a breakpoint in the debugger
 void say_hello(){
 
-	printf("Hello and welcome in the CHPS Master M1 !"); }
+	printf("Hello and welcome in the CHPS Master M1 ! \n"); }
 
 //Main program
 int main(){

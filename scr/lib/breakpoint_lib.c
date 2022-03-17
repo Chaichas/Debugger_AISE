@@ -1,5 +1,3 @@
- #include "breakpoint_lib.h"
- 
 //Insert trap instruction at the corresponding address + save original data in it
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
 
@@ -67,4 +65,15 @@ int breakpoint_resume(pid_t pid, debug_breakpoint* breakp){
 		return 1;}
 	else{
 		return -1;}
+}
+
+
+int print(struct dl_phdr_info *info, size_t size, void *data) {
+	printf("%s\n", info->dlpi_name);
+	return 0;
+}
+
+int main() {
+	dl_iterate_phdr(print, NULL);
+	return 0;
 }
