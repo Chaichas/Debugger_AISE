@@ -27,3 +27,7 @@ set | grep " ()"
 #reference: https://linuxhint.com/check_memory_usage_process_linux/
 
 ps -o pid,user,%mem,command ax | sort -b -k3 -r
+
+#Show all proceeses
+#e: Shows all processes and f is detailled display
+ps -ef
