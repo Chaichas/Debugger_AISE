@@ -18,8 +18,15 @@ int backtrace (pid_t pid){}
 
 static void handle_signal (int signo)
 {
-  signal (signo, SIG_DFL);
-  psignal (signo, "The signal received : ");
+    void *array[500];
+    size_t size;
+
+    size = backtrace(array, 500);
+    
+    fprintf(stderr, "Error: signal %d:\n", signal);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+   //signal (signo, SIG_DFL);
+  //psignal (signo, "The signal received : ");
   
 }  
 
