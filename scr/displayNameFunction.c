@@ -20,7 +20,7 @@ void main(int argc, char **argv)
         return;
     }
     else
-        printf("\nFile Opened to display function names :\n");
+        printf("\nThe functions in the program are the following:\n");
     while (1)
     {
         if ((fgets(ch, 100, fp)) != NULL)
