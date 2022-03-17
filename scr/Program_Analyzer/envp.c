@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+//display environment variables
 int main(int argc, char **argv, char ** envp)
 {
 	int i;
