@@ -1,6 +1,6 @@
-/*
- * C program to Display the Function Names defined in C Source File
- */
+/*********************************************************************************************/
+/* This code enables the user to display the function names defined in a c program          */
+/*******************************************************************************************/
 #include <stdio.h>
 #include <string.h>
  
