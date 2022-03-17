@@ -16,21 +16,12 @@
 
 int backtrace (pid_t pid){}
 
-static void handle_signal(int signo){
-
-       if(signo == SIGUSR1) 
-		printf("I caught SIGUSR1\n"); 
-
-	else if (signo == SIGTRAP)
-		printf("I caught SIGINT\n"); 
-        else if (signo == SIGSEGV)
-		printf("I caught SIGINT\n");  
-	else if (signo == SIGKILL)
-		printf("I caught SIGKILL\n"); 
-	else if (signo == SIGILL)
-		printf("I caught SIGILL\n"); 
-
-}
+static void handle_signal (int signo)
+{
+  signal (signo, SIG_DFL);
+  psignal (signo, "The signal received : ");
+  
+}  
 
 
 void function_child(const char *path, char *const argv[])
@@ -100,12 +91,8 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
 int main(int argc, char** argv)
 {
 
-for (int i = 0; i < NSIG; i++){
- if (signal(i, sigusr1_handler) == SIG_ERR) { 
-		printf ("Cannot catch ....\n");
-		
-	}
-}
+for (int i = 0; i < NSIG; i++)
+      signal (i, handle_signal);
 
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
