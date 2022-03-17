@@ -9,12 +9,15 @@
 #include <sys/reg.h>
 #include <sys/user.h>
 #include <unistd.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <string.h>
+#include <syscall.h>
 
-
-
+#include "debuglib.h"
 //---------------- struct of tracer ----------------
 
-int backtrace (pid_t pid){}
+//int backtrace (pid_t pid){}
 
 static void handle_signal (int signo)
 {
