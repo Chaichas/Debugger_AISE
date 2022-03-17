@@ -20,7 +20,7 @@ SRCDIR = lib
 #objdump is a command-line program for displaying various information about object files on Unix-like operating systems. [Wikipedia]
 address = `objdump -d prog_loop | grep function | head -n 1 | awk '{print $1;}'`
  
-all: debugger_library.i debbuger_bp prog_loop
+all: debugger_library.i debbuger_bp prog_loop show_library
 
 debugger_library.i: ${SRCDIR}/breakpoint_lib.c ${SRCDIR}/breakpoint_lib.h
 	$(LINKER) $(CFLAGS) -O -c ${SRCDIR}/breakpoint_lib.c
@@ -34,6 +34,13 @@ Run_Breakpoint: debugger test_program
 
 test_program: prog_loop.c
 	$(CC) $(CCFLAGS) $^ -o $@
+
+show_library: showLibary.c
+	$(LINKER) $(CFLAGS) -c showLibary.c
+
+Run_show_library: showLibary prog_loop.c
+	./showLibary prog_loop.c
+
  
 .PHONY: clean
 
