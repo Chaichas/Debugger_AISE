@@ -177,9 +177,10 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
 int main(int argc, char** argv)
 {
 
-for (int i = 0; i < NSIG; i++)
+for (int i = 0; i < NSIG; i++){
       signal (i, handle_signal);
-
+      psignal (i, "The signal received : ");
+}
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
         return -1;
