@@ -1,3 +1,22 @@
+#include <stdio.h>
+#include <assert.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <signal.h>
+#include <sys/ptrace.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/reg.h>
+#include <sys/user.h>
+#include <unistd.h>
+#include <errno.h>
+
+#include "breakpoint_lib.h"
+
+
+
 //Insert trap instruction at the corresponding address + save original data in it
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
 
@@ -31,6 +50,7 @@ void breakpoint_end(debug_breakpoint* breakp){
 }
 
 //Resuming breakpoints in case of existence of loops
+    
 int breakpoint_resume(pid_t pid, debug_breakpoint* breakp){
 
 	struct user_regs_struct regs;
