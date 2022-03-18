@@ -20,7 +20,9 @@ void main(int argc, char **argv)
         return;
     }
     else
-        printf("\nThe functions in the program are the following:\n");
+        printf("\n");
+	printf("*********************** Functions in the Program: *********************** \n");
+	printf("\n");
     while (1)
     {
         if ((fgets(ch, 100, fp)) != NULL)
@@ -101,7 +103,7 @@ void display(char *c,int p1)
     while (c[--temp] != ' ');
     for (i = temp + 1; i < p1; i++)            /* Print name of function character by character */
         printf("%c", c[i]);
-    printf("\n");
+	printf("\n");
     return;
  
 }

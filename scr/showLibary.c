@@ -8,12 +8,15 @@
 
 
 int print(struct dl_phdr_info *info, size_t size, void *data) {
-  printf("%s\n", info->dlpi_name);
-  return 0;
+	printf("%s\n", info->dlpi_name);
+	return 0;
 }
 
 
 int main() {
-  dl_iterate_phdr(print, NULL);
-  return 0;
+	printf("\n");
+	printf("***********************     Loaded Libraries:     *********************** \n");
+	printf("\n");
+	dl_iterate_phdr(print, NULL);
+	return 0;
 }

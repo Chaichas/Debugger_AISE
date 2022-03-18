@@ -10,6 +10,9 @@ int main(int argc, char **argv, char ** envp)
 {
 	int i;
 
+	printf("\n");
+	printf("********************   The environment variables:    ******************** \n");
+	printf("\n");
 	while(*envp)
 	{
 		printf("%s\n", *envp);
