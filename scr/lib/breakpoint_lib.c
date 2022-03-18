@@ -24,7 +24,7 @@ long get_child(pid_t pid)
 }
 
 //Insert trap instruction at the corresponding address + save original data in it
-void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
+static void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
 
 	assert(breakp);
 	breakp->data = ptrace(PTRACE_PEEKTEXT, pid, breakp->address, 0);
@@ -32,7 +32,7 @@ void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
 }
 
 //non-existence of breakpoints
-void breakpoint_false(pid_t pid, debug_breakpoint* breakp){
+static void breakpoint_false(pid_t pid, debug_breakpoint* breakp){
 
 	assert(breakp);
 	unsigned data = ptrace(PTRACE_PEEKTEXT, pid, breakp->address, 0);

@@ -19,13 +19,13 @@
 typedef struct debug_breakpoint{
 	void* address;
 	unsigned data;
-}debug_breakpoint; 
+} debug_breakpoint; 
 
 long get_child(pid_t pid);
-void breakpoint_true(pid_t pid, debug_breakpoint* breakp);
-void breakpoint_false(pid_t pid, debug_breakpoint* breakp);
+static void breakpoint_true(pid_t pid, debug_breakpoint* breakp);
+static void breakpoint_false(pid_t pid, debug_breakpoint* breakp);
 debug_breakpoint* breakpoint_start(pid_t pid, void* address);
 void breakpoint_end(debug_breakpoint* breakp);
-int breakpoint_resume(pid_t pid, debug_breakpoint* breakp);
+int breakpoint_resume(pid_t pid, debug_breakpoint* bp);
 
 #endif
