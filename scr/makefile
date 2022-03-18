@@ -22,7 +22,7 @@ SRCDIR = lib
 address = `objdump -d prog_loop | grep say_hello | head -n 1 | awk '{print $1;}'`
  
 
-all:  test_program Run_show_library Run_Display_Function_Name Var_Environment 
+all:  test_program Run_show_library Run_Display_Function_Name Var_Environment debbuger_bp
 
 debugger_library.a: ${SRCDIR}/breakpoint_lib.c ${SRCDIR}/breakpoint_lib.h
 	$(LINKER) $(CFLAGS) -O -c ${SRCDIR}/breakpoint_lib.c

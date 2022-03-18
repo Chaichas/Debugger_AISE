@@ -16,13 +16,19 @@
 #include "breakpoint_lib.h"
 
 
+long get_child(pid_t pid)
+{
+    struct user_regs_struct regs;
+    ptrace(PTRACE_GETREGS, pid, 0, &regs);
+    return regs.rip;
+}
 
 //Insert trap instruction at the corresponding address + save original data in it
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
 
 	assert(breakp);
 	breakp->data = ptrace(PTRACE_PEEKTEXT, pid, breakp->address, 0);
-	ptrace(PTRACE_POKETEXT, pid, breakp->address, (breakp->data & 0xFFFFFF00) | 0xCC);
+	ptrace(PTRACE_POKETEXT, pid, breakp->address, (breakp->data & ~0xFF) | 0xCC);
 }
 
 //non-existence of breakpoints
@@ -31,7 +37,7 @@ void breakpoint_false(pid_t pid, debug_breakpoint* breakp){
 	assert(breakp);
 	unsigned data = ptrace(PTRACE_PEEKTEXT, pid, breakp->address, 0);
 	assert((data & 0xFF) == 0xCC);
-	ptrace(PTRACE_POKETEXT, pid, breakp->address, (data & 0xFFFFFF00) | (breakp->data & 0xFF));
+	ptrace(PTRACE_POKETEXT, pid, breakp->address, (data & ~0xFF) | (breakp->data & 0xFF));
 }
 
 //creation of a breakpoint
@@ -57,6 +63,7 @@ int breakpoint_resume(pid_t pid, debug_breakpoint* breakp){
 	int status_of_wait;
 	
 	ptrace(PTRACE_GETREGS, pid, 0, &regs); //Read the tracee's registers
+	assert(regs.rip == (long) breakp->address + 1);
 	
 	regs.rip = (long) breakp->address;
 	ptrace(PTRACE_SETREGS, pid, 0, &regs);

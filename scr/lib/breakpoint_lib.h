@@ -21,6 +21,7 @@ typedef struct debug_breakpoint{
 	unsigned data;
 }debug_breakpoint; 
 
+long get_child(pid_t pid);
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp);
 void breakpoint_false(pid_t pid, debug_breakpoint* breakp);
 debug_breakpoint* breakpoint_start(pid_t pid, void* address);
