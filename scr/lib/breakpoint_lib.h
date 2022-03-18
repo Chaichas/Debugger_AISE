@@ -16,11 +16,10 @@
 #include <errno.h>
 #include <assert.h>
  
-typedef struct debug_breakpoint_type debug_breakpoint;
-struct debug_breakpoint_type {
+typedef struct debug_breakpoint{
 	void* address;
 	unsigned data;
-}; 
+}debug_breakpoint; 
 
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp);
 void breakpoint_false(pid_t pid, debug_breakpoint* breakp);

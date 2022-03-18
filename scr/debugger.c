@@ -22,7 +22,7 @@
 
 //--------------------------------------------
 
-
+/*
 //Insert trap instruction at the corresponding address + save original data in it
 void breakpoint_true(pid_t pid, debug_breakpoint* breakp){
 
@@ -91,7 +91,7 @@ int breakpoint_resume(pid_t pid, debug_breakpoint* breakp){
 		return 1;}
 	else{
 		return -1;}
-}
+} */
 
 //--------------------------------------------
 
