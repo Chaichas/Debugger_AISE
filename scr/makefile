@@ -22,7 +22,7 @@ SRCDIR = lib
 address = `objdump -d prog_loop | grep say_hello | head -n 1 | awk '{print $1;}'`
  
 
-all:  debbuger_bp  test_program 
+all:  debbuger_bp  test_program Run_show_library Run_Display_Function_Name
 
 #debugger_library.i: ${SRCDIR}/breakpoint_lib.c ${SRCDIR}/breakpoint_lib.h
 #	$(LINKER) $(CFLAGS) -O -c ${SRCDIR}/breakpoint_lib.c
@@ -36,8 +36,19 @@ Run_Breakpoint: debbuger_bp test_program
 
 test_program: prog_loop.c
 	$(CC) $(CCFLAGS) $^ -o $@
+	
+Run_show_library: showLibary
+	./showLibary
+
+Display_Function_Name: displayNameFunction.c
+	$(LINKER) $(CFLAGS) -c displayNameFunction.c
+	
+Run_Display_Function_Name: displayNameFunction prog_loop.c
+	./displayNameFunction prog_loop.c 
+ 
+ 
  
 .PHONY: clean
 
 clean:
-	rm -Rf *~  debbuger_bp Run_Breakpoint test_program *.i *.g *.o
+	rm -Rf *~  debbuger_bp Run_Breakpoint test_program Run_show_library Run_Display_Function_Name *.i *.g *.o
