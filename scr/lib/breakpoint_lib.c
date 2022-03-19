@@ -21,7 +21,7 @@ void breakpoint_start(pid_t pid, uint64_t adresse, long data,int  _wait){
 
     /* See what's there again... */
     long readback_data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
-    //procmsg("After trap, data at %p: %p\n", adresse, readback_data);
+    printf("After trap data at %ld: %ld\n", adresse, readback_data);
 
     /* Let the child run to the breakpoint and wait for it to
     ** reach it 
@@ -30,7 +30,7 @@ void breakpoint_start(pid_t pid, uint64_t adresse, long data,int  _wait){
 
     wait(&_wait);
     if (WIFSTOPPED(_wait)) {
-        //procmsg("Child got a signal: %s\n", strsignal(WSTOPSIG(wait_status)));
+        printf("Child got a signal");
     }
     else {
         perror("wait");
@@ -50,9 +50,9 @@ void breakpoint_resume(pid_t pid,int  _wait){
     wait(& _wait);
 
     if (WIFEXITED( _wait)) {
-        //procmsg("Child exited\n");
+        printf("Child exited\n");
     } 
     else {
-        //procmsg("Unexpected signal\n");
+        printf("Unexpected signal\n");
     }
 }
