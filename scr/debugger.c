@@ -26,8 +26,8 @@ static void handle_signal (int signo)
 
     size = backtrace(array, 500);
     
-    fprintf(stderr, "Error: signal %p:\n", signal);
-    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    //fprintf(stderr, "Error: signal %p:\n", signal);
+    //backtrace_symbols_fd(array, size, STDERR_FILENO);
    //signal (signo, SIG_DFL);
   //psignal (signo, "The signal received : ");
   
@@ -47,8 +47,8 @@ fprintf(stdout,"debugger started\n");
 
     wait(0);
     struct user_regs_struct regs;
-    //ptrace(PTRACE_GETREGS, pid, 0, &regs);
-    //printf(stdout,"child now at RIP = %p\n", regs.rip);
+    ptrace(PTRACE_GETREGS, pid, 0, &regs);
+    printf(stdout,"child now at RIP = %p\n", regs.rip);
     debug_breakpoint* breakp = breakpoint_start(pid, (void*) adresse);
     fprintf(stdout,"breakpoint created\n");
     ptrace(PTRACE_CONT, pid, 0, 0);
@@ -56,9 +56,8 @@ fprintf(stdout,"debugger started\n");
     
  while (1) {
        
-        //struct user_regs_struct regs;
-        //ptrace(PTRACE_GETREGS, pid, 0, &regs);
-        fprintf(stdout,"child stopped at breakpoint. EIP = %lld\n", regs.rip);
+      
+        fprintf(stdout,"child stopped at breakpoint. RIP = 0x%08llX\n", regs.rip);
         fprintf(stdout,"resuming\n");
         
         int rc = breakpoint_resume(pid, breakp);
@@ -104,7 +103,7 @@ int main(int argc, char** argv)
 
 for (int i = 0; i < NSIG; i++){
       signal (i, handle_signal);
-      psignal (i, "The signal received : ");
+      //psignal (i, "The signal received : ");
 }
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
