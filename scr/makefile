@@ -19,7 +19,7 @@ SRCDIR = lib
 #Tested program is "program.c" and function in front of which we will be putting the breakpoint is called "function"
 
 #objdump is a command-line program for displaying various information about object files on Unix-like operating systems. [Wikipedia]
-addr = `objdump -d prog_loop | grep say_hello | head -n 1 | awk '{print $1;}'`
+addr = `objdump -d test_program | grep say_hello | head -n 1 | awk '{print $1;}'`
  
 
 all:  test_program Run_show_library Run_Display_Function_Name Var_Environment debbuger_bp
@@ -29,7 +29,7 @@ debugger_library.a: ${SRCDIR}/breakpoint_lib.c ${SRCDIR}/breakpoint_lib.h
 	ar rcs debugger_library.a breakpoint_lib.o
 
 debbuger_bp: debugger.c  debugger_library.a
-	$(LINKER) $(CFLAGS) $< -o $@ $(LFLAGS)
+	$(LINKER) $(CFLAGS) $< -g -rdynamic -o $@ $(LFLAGS)
 	
 Run_Breakpoint: debbuger_bp test_program
 	./debbuger_bp test_program 0x$(address)
