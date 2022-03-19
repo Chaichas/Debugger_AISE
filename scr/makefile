@@ -55,4 +55,4 @@ Var_Environment:
 .PHONY: clean
 
 clean:
-	rm -Rf *~  debbuger_bp Run_Breakpoint test_program Run_show_library Run_Display_Function_Name showLibary displayNameFunction *.i *.g *.o
+	rm -Rf *~  debbuger_bp Run_Breakpoint test_program Run_show_library Run_Display_Function_Name showLibary displayNameFunction Var_Environment envp *.i *.g *.o
