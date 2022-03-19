@@ -57,7 +57,7 @@ int breakpoint_resume(pid_t pid, debug_breakpoint* var){
 	printf("%ld var add",var->addr);
 	printf("%ld var regs.rip",regs.rip); */
 
-	//assert(regs.rip == (long) var->addr + 1);
+	assert(regs.rip == (long) var->addr + 1);
 	
 	regs.rip = (long) var->addr;
 

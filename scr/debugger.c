@@ -26,7 +26,7 @@ static void handle_signal (int signo)
 
     size = backtrace(array, 500);
     
-    fprintf(stderr, "Error: signal %d:\n", signal);
+    fprintf(stderr, "Error: signal %p:\n", signal);
     backtrace_symbols_fd(array, size, STDERR_FILENO);
    //signal (signo, SIG_DFL);
   //psignal (signo, "The signal received : ");
@@ -43,14 +43,14 @@ void function_child(const char *path, char *const argv[])
 void function_debugger(pid_t pid, uint64_t adresse)
 {
   
-printf(stdout,"debugger started\n");
+fprintf(stdout,"debugger started\n");
 
     wait(0);
     struct user_regs_struct regs;
     //ptrace(PTRACE_GETREGS, pid, 0, &regs);
     //printf(stdout,"child now at RIP = %p\n", regs.rip);
     debug_breakpoint* breakp = breakpoint_start(pid, (void*) adresse);
-    printf(stdout,"breakpoint created\n");
+    fprintf(stdout,"breakpoint created\n");
     ptrace(PTRACE_CONT, pid, 0, 0);
     wait(0);
     
@@ -58,21 +58,21 @@ printf(stdout,"debugger started\n");
        
         //struct user_regs_struct regs;
         //ptrace(PTRACE_GETREGS, pid, 0, &regs);
-        printf(stdout,"child stopped at breakpoint. EIP = %p\n", regs.rip);
-        printf(stdout,"resuming\n");
+        fprintf(stdout,"child stopped at breakpoint. EIP = %lld\n", regs.rip);
+        fprintf(stdout,"resuming\n");
         
         int rc = breakpoint_resume(pid, breakp);
 
         switch(rc) {
             case 0:
-            printf(stdout,"child exited\n");
+            fprintf(stdout,"child exited\n");
             break;
         
             case 1:
             continue;
             
             default :
-            printf(stdout,"unexpected: %d\n", rc);
+            fprintf(stdout,"unexpected: %d\n", rc);
             break;
         }
     }
