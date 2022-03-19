@@ -99,7 +99,6 @@ int breakpoint_resume(pid_t pid, debug_breakpoint* var){
 		fprintf(stderr, "tracing error\n");
 		return -1;
 	} else{
-		return 1;
-	}
+		return 1;}
 	return -1;
-}
+	}
