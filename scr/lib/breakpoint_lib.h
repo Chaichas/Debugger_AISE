@@ -24,9 +24,9 @@ typedef struct debug_breakpoint{
 struct user_regs_struct regs;
 
 static void breakpoint_true(pid_t pid, debug_breakpoint* breakp);
-static void breakpoint_false(pid_t pid, debug_breakpoint* breakp);
-debug_breakpoint* breakpoint_start(pid_t pid, void* addr);
+static void breakpoint_false(pid_t pid, uint64_t adresse, long data);
+void breakpoint_start(pid_t pid, uint64_t adresse, long data,int  _wait);
 void breakpoint_end(debug_breakpoint* breakp);
-int breakpoint_resume(pid_t pid, debug_breakpoint* bp);
+void breakpoint_resume(pid_t pid,int _wait);
 
 #endif

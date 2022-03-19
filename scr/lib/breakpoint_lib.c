@@ -1,104 +1,58 @@
 #include "breakpoint_lib.h"
 
-//long ptrace(enum __ptrace_request request, pid_t pid, void *addr, void *data);
 
-/* Insert the trap instruction at its address and save data in it
-Case of breakpoint enabling */
-static void breakpoint_true(pid_t pid, debug_breakpoint* var){
-
-	assert(var);
-
-	//Read a word at the address addr in the tracee's memory (var->addr)
-	var->data = ptrace(PTRACE_PEEKTEXT, pid, var->addr, NULL);
-
-	//Copy the word data to the address addr in the tracee's memory.
-	ptrace(PTRACE_POKETEXT, pid, var->addr, (var->data & ~0xFF) | 0xCC);
-}
 
 
 //In case of breakpoints disabling 
-static void breakpoint_false(pid_t pid, debug_breakpoint* var){
+static void breakpoint_false(pid_t pid, uint64_t adresse, long data){
 
-	assert(var);
-	long data = ptrace(PTRACE_PEEKTEXT, pid, var->addr, NULL);
-
-	assert((data & 0xFF) == 0xCC);
-	ptrace(PTRACE_POKETEXT, pid, var->addr, (var->data & 0xFF) | (data & ~0xFF));
+    ptrace(PTRACE_POKETEXT, pid, (void*)adresse, (void*)data);
+    regs.rip -= 1;
+    ptrace(PTRACE_SETREGS, pid, 0, &regs);
 }
 
 
 //creation of a breakpoint at the beginning of a function
-debug_breakpoint* breakpoint_start(pid_t pid, void* addr){
+void breakpoint_start(pid_t pid, uint64_t adresse, long data,int  _wait){
 
-	debug_breakpoint* var = malloc(sizeof(*var));
+    /* Write the trap instruction 'int 3' into the address */
+    long data_with_trap = (data & ~0xFF) | 0xCC;
+    ptrace(PTRACE_POKETEXT, pid, (void*)adresse, (void*)data_with_trap);
 
-	var->addr = addr;
+    /* See what's there again... */
+    long readback_data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
+    //procmsg("After trap, data at %p: %p\n", adresse, readback_data);
 
-	breakpoint_true(pid, var); //breakpoint enabled
-    
-	return var;}
+    /* Let the child run to the breakpoint and wait for it to
+    ** reach it 
+    */
+    ptrace(PTRACE_CONT, pid, 0, 0);
 
-
-//Cleaning of breakpoints	
-void breakpoint_end(debug_breakpoint* var){
-
-	free(var); //free pointer
+    wait(&_wait);
+    if (WIFSTOPPED(_wait)) {
+        //procmsg("Child got a signal: %s\n", strsignal(WSTOPSIG(wait_status)));
+    }
+    else {
+        perror("wait");
+        return;
+    }
 }
+
+
 
 
 /* Resuming breakpoints in case the breakpoint is in front of a function in the prog
 that is part of a loop */    
-int breakpoint_resume(pid_t pid, debug_breakpoint* var){
+void breakpoint_resume(pid_t pid,int  _wait){
 
-	int status_wait;
-	
-	ptrace(PTRACE_GETREGS, pid, NULL, &regs); //Read the tracee's registers
-	/*
-	printf("%ld var add",var->addr);
-	printf("%ld var regs.rip",regs.rip); */
+    ptrace(PTRACE_CONT, pid, 0, 0);
 
-	assert(regs.rip == (long) var->addr + 1);
-	
-	regs.rip = (long) var->addr;
+    wait(& _wait);
 
-	ptrace(PTRACE_SETREGS, pid, NULL, &regs); //Modify the tracee's registers
-	
-	breakpoint_false(pid, var); //disable breakpoint
-	
-	//Tracing of process in mode single step
-	if (ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL) < 0) {		
-		perror("ptrace"); //error
-		exit(1);
-	}
-
-	//Check the child wait status
-	wait(&status_wait);
-	
-	//Check the child exit status
-	if (WIFEXITED(status_wait)) {
-		printf("Child exit status: %d\n", WIFEXITED(status_wait));
-		return 0;
-	}
-			
-	//Enabling of the breakpoint, proccess runs
-	breakpoint_true(pid, var);
-	
-	if (ptrace(PTRACE_CONT, pid, NULL, NULL) < 0) {
-		perror("ptrace"); //error
-		exit(1);
-	}
-		
-	//Child wait status
-	wait(&status_wait);
-
-	if (WIFEXITED(status_wait)){
-		return 0;
-	}
-	
-	if (!WIFSTOPPED(status_wait)){
-		fprintf(stderr, "tracing error\n");
-		return -1;
-	} else{
-		return 1;}
-	return -1;
-	}
+    if (WIFEXITED( _wait)) {
+        //procmsg("Child exited\n");
+    } 
+    else {
+        //procmsg("Unexpected signal\n");
+    }
+}
