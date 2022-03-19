@@ -19,65 +19,120 @@
 
 //---------------- struct of tracer ----------------
 
+void display(const char* format, ...)
+{
+    va_list ap;
+    fprintf(stdout, "[%d] ", getpid());
+    va_start(ap, format);
+    vfprintf(stdout, format, ap);
+    va_end(ap);
+}
+
+
+static void backtrace2(pid_t pid2){
+    
+    printf("------------------Backtrace startred --------------\n\n");
+    
+    void *array[500];
+    size_t size;
+
+    size = backtrace(array, 500);
+
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    printf("-------------------------------------------------\n");
+}
+
+
+/*
 static void handle_signal (int signo)
 {
     void *array[500];
     size_t size;
 
     size = backtrace(array, 500);
-    
-    //fprintf(stderr, "Error: signal %p:\n", signal);
-    //backtrace_symbols_fd(array, size, STDERR_FILENO);
-   //signal (signo, SIG_DFL);
-  //psignal (signo, "The signal received : ");
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    psignal (signo, "The signal received : ");
   
 }  
-
+*/
 
 void function_child(const char *path, char *const argv[])
 {
+
+  printf("\n");
+  printf("-----------------------------------------------------------\n");
+  printf("##################### Start Program #######################\n");
+  printf("-----------------------------------------------------------\n");
+  display("Target started. will run '%s'\n\n", path);
   ptrace(PTRACE_TRACEME, 0, 0, 0);
   execv(path, argv);
 }
 
 void function_debugger(pid_t pid, uint64_t adresse)
 {
+    wait(0);
+    siginfo_t info;
+    ptrace(PTRACE_GETSIGINFO, pid, 0, &info);
+    
+    printf("---------------------- Signal send -------------------\n");
+    printf("Number of signal is : %d \n", info.si_signo);
+    
+    switch (info.si_signo) {
+    case SIGTRAP:
+        printf("the signal sent : SIGTRAP \n");
+        break;
+        
+    case SIGSEGV:
+        printf("the signal sent : SIGTRAP \n");
+        break;
+    case SIGCHLD:
+         printf("the signal sent : SIGTRAP \n");
+    default:
+        printf("Got signal : (%s) \n",strsignal(info.si_signo));
+    }
+    printf("-------------------------------------------------\n");
+    ptrace(PTRACE_CONT, pid, 0, 0);
   
-fprintf(stdout,"debugger started\n");
-
+display("debugger started\n\n");
+    
+    backtrace2(pid);
     wait(0);
     struct user_regs_struct regs;
     ptrace(PTRACE_GETREGS, pid, 0, &regs);
-    printf(stdout,"child now at RIP = %p\n", regs.rip);
-    debug_breakpoint* breakp = breakpoint_start(pid, (void*) adresse);
-    fprintf(stdout,"breakpoint created\n");
+    printf("\n");
+    printf("-------------------------------------------------\n");
+    display("child now at RIP = 0x%08llX\n", regs.rip);
+    debug_breakpoint* breakp = breakpoint_start(pid, (void*) 0x1149);
+    display("breakpoint created\n");
     ptrace(PTRACE_CONT, pid, 0, 0);
     wait(0);
     
  while (1) {
        
       
-        fprintf(stdout,"child stopped at breakpoint. RIP = 0x%08llX\n", regs.rip);
-        fprintf(stdout,"resuming\n");
+        display("child stopped at breakpoint. RIP = 0x%08llX\n", regs.rip);
+        display("resuming\n");
         
         int rc = breakpoint_resume(pid, breakp);
 
         switch(rc) {
             case 0:
-            fprintf(stdout,"child exited\n");
+            display("child exited\n");
             break;
         
             case 1:
             continue;
             
             default :
-            fprintf(stdout,"unexpected: %d\n", rc);
+            display("unexpected: %d\n", rc);
             break;
         }
     }
 
     breakpoint_end(breakp);
+    printf("\n");
 
+ 
 }
 
 
@@ -90,6 +145,10 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
     function_child(path, argv);
   else if (child> 0){
     uint64_t adresse = (uint64_t) strtol(path2, NULL, 16);
+   // for (int i = 0; i < NSIG; i++){
+     // signal (i, handle_signal);
+      
+
     function_debugger(child, adresse);
     }
   else {
@@ -101,10 +160,7 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
 int main(int argc, char** argv)
 {
 
-for (int i = 0; i < NSIG; i++){
-      signal (i, handle_signal);
-      //psignal (i, "The signal received : ");
-}
+
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
         return -1;
