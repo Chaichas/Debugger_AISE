@@ -29,7 +29,7 @@ debugger_library.a: ${SRCDIR}/breakpoint_lib.c ${SRCDIR}/breakpoint_lib.h
 	ar rcs debugger_library.a breakpoint_lib.o
 
 debbuger_bp: debugger.c  debugger_library.a
-	$(LINKER) $(CFLAGS) $< -o $@ $(LFLAGS)
+	$(LINKER) $(CFLAGS) $< -g -rdynamic -o $@ $(LFLAGS)
 	
 Run_Breakpoint: debbuger_bp test_program
 	./debbuger_bp test_program 0x$(address)
