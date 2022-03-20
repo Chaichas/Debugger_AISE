@@ -21,7 +21,9 @@ int main(int argc, char **argv, char ** envp)
 		envp++;
 	}
 
-	printf("LOL = %s\n", getenv("LOL"));
+	const char * path = getenv( "PATH" );
+	printf( "PATH environment variable == %s\n", path );
+	
 	printf("\n");
 	printf("************************************************************************* \n");
 	printf("\n");
