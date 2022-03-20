@@ -19,23 +19,37 @@
 
 //---------------- struct of tracer ----------------
 
-static void handle_signal (int signo)
+void display(const char* format, ...)
 {
+    va_list ap;
+    fprintf(stdout, "[%d] ", getpid());
+    va_start(ap, format);
+    vfprintf(stdout, format, ap);
+    va_end(ap);
+}
+
+static void backtrace2(pid_t pid2){
+    
+    printf("------------------Backtrace startred --------------\n\n");
+    
     void *array[500];
     size_t size;
 
     size = backtrace(array, 500);
-    
-    fprintf(stderr, "Error: signal %p:\n", signal);
+
     backtrace_symbols_fd(array, size, STDERR_FILENO);
-   //signal (signo, SIG_DFL);
-  //psignal (signo, "The signal received : ");
-  
-}  
+    printf("-------------------------------------------------\n");
+}
+
 
 
 void function_child(const char *path, char *const argv[])
 {
+  printf("\n");
+  printf("-----------------------------------------------------------\n");
+  printf("##################### Start Program #######################\n");
+  printf("-----------------------------------------------------------\n");
+  display("Target started. will run '%s'\n\n", path);
   ptrace(PTRACE_TRACEME, 0, 0, 0);
   execv(path, argv);
 }
@@ -43,44 +57,41 @@ void function_child(const char *path, char *const argv[])
 void function_debugger(pid_t pid, uint64_t adresse)
 {
   
-// fprintf(stdout,"debugger started\n");
-
-//     wait(0);
-//     //struct user_regs_struct regs;
-//     ptrace(PTRACE_GETREGS, pid, 0, &regs);
-//     fprintf(stdout,"child now at RIP = %lld\n", regs.rip);
-//     debug_breakpoint* breakp = breakpoint_start(pid, (void*) adresse);
-//     fprintf(stdout,"breakpoint created\n");
-//     ptrace(PTRACE_CONT, pid, 0, 0);
-//     wait(0);
+wait(0);
+    siginfo_t info;
+    ptrace(PTRACE_GETSIGINFO, pid, 0, &info);
     
-//  while (1) {
-       
-//         //struct user_regs_struct regs;
-//         //ptrace(PTRACE_GETREGS, pid, 0, &regs);
-//         fprintf(stdout,"child stopped at breakpoint. EIP = %lld\n", regs.rip);
-//         fprintf(stdout,"resuming\n");
+    printf("---------------------- Signal send -------------------\n");
+    printf("Number of signal is : %d \n", info.si_signo);
+    
+    switch (info.si_signo) {
+    case SIGTRAP:
+        printf("the signal sent : SIGTRAP \n");
+        break;
         
-//         int rc = breakpoint_resume(pid, breakp);
+    case SIGSEGV:
+        printf("the signal sent : SIGTRAP \n");
+        break;
+    case SIGCHLD:
+         printf("the signal sent : SIGTRAP \n");
+    default:
+        printf("Got signal : (%s) \n",strsignal(info.si_signo));
+    }
+    printf("-------------------------------------------------\n");
+    ptrace(PTRACE_CONT, pid, 0, 0);
+  
+    display("debugger started\n\n");
+    backtrace2(pid);
 
-//         switch(rc) {
-//             case 0:
-//             fprintf(stdout,"child exited\n");
-//             break;
-        
-//             case 1:
-//             continue;
-            
-//             default :
-//             fprintf(stdout,"unexpected: %d\n", rc);
-//             break;
-//         }
-//     }
 
-//     breakpoint_end(breakp);
     int wait_status;
     struct user_regs_struct regs;
     //procmsg("debugger started\n");
+    ptrace(PTRACE_GETREGS, pid, 0, &regs);
+    printf("\n");
+    printf("-------------------------------------------------\n");
+    //display("child now at RIP = \n", regs.rip);
+   
 
     /* Wait for child to stop on its first instruction */
     wait(&wait_status);
@@ -132,10 +143,7 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
 int main(int argc, char** argv)
 {
 
-for (int i = 0; i < NSIG; i++){
-      signal (i, handle_signal);
-      psignal (i, "The signal received : ");
-}
+
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
         return -1;
