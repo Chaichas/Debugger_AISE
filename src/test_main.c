@@ -8,7 +8,6 @@
 
 static void test_parse_args(void **state) {
 
-  printf("Testing the arguments parsing function");
   /* no arg, too many args */
   assert_int_equal(-1, parse_args(1, (char*[]){"prog_loop"}));
   assert_int_equal(-1, parse_args(3, (char*[]){"prog_loop", "0x1060", "0x1060"}));
