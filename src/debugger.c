@@ -108,7 +108,7 @@ wait(0);
    
     /* Look at the word at the address we're interested in */
     long data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
-    display("Original data at %p: %p\n", adresse, data);
+    display("Original data at address %p \n", adresse);
     
     breakpoint_execute(pid,adresse,data,wait_status);
     
@@ -145,14 +145,32 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
  
 }
 
-int main(int argc, char** argv)
+static int parse_args(int argc, char * argv[]){
+  if (argc != 2) {
+    return -1;
+  }   
+  int n = strtol(argv[1], NULL, 10); //string to long (string, endptr = 0 if no need, base = 10 decimal base)
+  if (n <= 0) {
+    return -1;
+  }
+  
+  return n;
+}
+  
+#ifndef CMOCKA_H_
+int main(int argc, char* argv[])
 {
 
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
+        
         return -1;
     }
+    
+ int n = parse_args(argc, argv); //for testing purposes of args
+
  dbugging_exec(argv[1],argv[2], argv);
 
   return 0;
 }
+#endif

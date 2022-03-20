@@ -57,6 +57,9 @@ Var_Environment: envp
 
 Run_Prog_Analyzer: Run_show_Object Run_show_Lib Var_Environment Run_show_reg Run_Display_Function_Name
 
+check: debugger.c test_main.c
+	$(LINKER) $(CFLAGS) -g test_main.c -o test_main -lcmocka
+
 .PHONY: clean
 
 clean:
