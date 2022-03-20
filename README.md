@@ -69,3 +69,8 @@ To clean everything:
 To make all:
 
 	make all
+	
+To test the arguments in the main function (in debugger.c):
+
+	make check
+	./test_main
