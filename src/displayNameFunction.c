@@ -111,5 +111,6 @@ void main(int argc, char **argv)
 	printf("*********************** Functions in the Program: *********************** \n");
 	function_prog (fp, ch, position1, position2, position3);
 	printf("\n");
+	printf("************************************************************************* \n");
     
 }

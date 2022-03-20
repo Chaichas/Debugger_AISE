@@ -4,6 +4,7 @@ echo ""
 echo "******************* Entire Dependencies of Executable: *********************"
 ldd /bin/ls
 echo ""
+
 echo "******************* Direct Dependencies of Executable: *********************"
 objdump -p prog_loop | grep NEEDED
 echo "****************************************************************************"
