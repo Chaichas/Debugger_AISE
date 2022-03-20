@@ -22,7 +22,11 @@ int print(struct dl_phdr_info *info, size_t size, void *data) {
 
 int main(int argc, char *argv[]) {
 	printf("\n");
-	printf("***********************     Program Analyzer:     *********************** \n");
+	printf("************************************************************************* \n");
+	printf("\n");
+	printf("#######################     Program Analyzer:     ####################### \n");
+	printf("\n");
+	printf("************************************************************************* \n");
 	printf("\n");
 	printf("***********************     Loaded Libraries:     *********************** \n");
 	printf("\n");
