@@ -1,58 +1,43 @@
 #include "breakpoint_lib.h"
 
-
-
-
-//In case of breakpoints disabling 
+//Here, breakpoints are disabled
 static void breakpoint_false(pid_t pid, uint64_t adresse, long data){
 
-    ptrace(PTRACE_POKETEXT, pid, (void*)adresse, (void*)data);
+    ptrace(PTRACE_POKETEXT, pid, (void*)adresse, (void*)data); //Copy the word data to the address adresse in the tracee's memory
     regs.rip -= 1;
-    ptrace(PTRACE_SETREGS, pid, 0, &regs);
+    ptrace(PTRACE_SETREGS, pid, 0, &regs); //Modify the tracee's registers
 }
 
 
 //creation of a breakpoint at the beginning of a function
-void breakpoint_start(pid_t pid, uint64_t adresse, long data,int  _wait){
+void breakpoint_execute(pid_t pid, uint64_t adresse, long data,int  _wait){
 
-    /* Write the trap instruction 'int 3' into the address */
-    long data_with_trap = (data & ~0xFF) | 0xCC;
-    ptrace(PTRACE_POKETEXT, pid, (void*)adresse, (void*)data_with_trap);
+    long data_int3 = (data & ~0xFF) | 0xCC; //write int3 instruction in the address of data
+    
+    ptrace(PTRACE_POKETEXT, pid, (void*)adresse, (void*)data_int3); //Copy the word data_int3 to the address adresse in the tracee's memory
 
-    /* See what's there again... */
-    long readback_data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
-    display("After trap data at %p: %p\n", adresse, readback_data);
+    //Read pid at address
+    long read_data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0); //Read a word at the address adresse in the tracee's memory
+    
+    printf("The data, after int3, is at %ld: %ld\n", adresse, read_data);
 
-    /* Let the child run to the breakpoint and wait for it to
-    ** reach it 
-    */
+    // wait for child to reach the breakpoint
     ptrace(PTRACE_CONT, pid, 0, 0);
-
     wait(&_wait);
+    
     if (WIFSTOPPED(_wait)) {
         printf("Child got a signal");
     }
     else {
-        perror("wait");
         return;
     }
 }
 
-
-
-
-/* Resuming breakpoints in case the breakpoint is in front of a function in the prog
-that is part of a loop */    
+//Child continues the execution
 void breakpoint_resume(pid_t pid,int  _wait){
 
     ptrace(PTRACE_CONT, pid, 0, 0);
-
     wait(& _wait);
-
-    if (WIFEXITED( _wait)) {
-        printf("Child exited\n");
-    } 
-    else {
-        printf("Unexpected signal\n");
-    }
+    printf("Child exited\n");
+    
 }

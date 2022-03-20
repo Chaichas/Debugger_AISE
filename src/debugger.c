@@ -104,13 +104,13 @@ wait(0);
     printf("\n");
     printf("-------------------------------------------------\n");
     /* See where the child is now */
-    display("child now at EIP = %p\n", regs.rip);
+    display("child now at RIP = %p\n", regs.rip);
    
     /* Look at the word at the address we're interested in */
     long data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
     display("Original data at %p: %p\n", adresse, data);
     
-    breakpoint_start(pid,adresse,data,wait_status);
+    breakpoint_execute(pid,adresse,data,wait_status);
     
     /* See where the child is now */
     ptrace(PTRACE_GETREGS, pid, 0, &regs);
