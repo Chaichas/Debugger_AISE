@@ -26,10 +26,9 @@ The project is build using a Makefile. The different commands are described here
 
 To display the shared libraries in the executed program:
 
-	make show_library
 	make Run_show_library
 	
-To display the environment variables:
+To display the environment variables for a C program:
 
 	make Var_Environment
 	
@@ -38,31 +37,31 @@ To display the function names defined in a c program:
 	make Display_Function_Name
 	make Run_Display_Function_Name
 	
+To run the program analyzer, containing shared libraries, environment variables as well as function names for a given C program:
+
+	make Run_Prog_Analyzer
+	
 The c test program defined here is "prog_loop.c". However, it is possible to change it in the makefile.
 
 To test the C program output:
 
 	make test_program
+	./test_program
 	
 To execute the breakpoint library defined in the "lib" folder":
 
-	make debugger_library.i
+	make debugger_library.a
 	
-To run the debugger:
-
-	make test_program
-	make debbuger_bp
-	
-To run the debugger which the breakpoint created on a defined address:
+To run the debugger using an entry point address:
 
 	make test_program
 	readelf -h prog_loop
-	make Run_Breakpoint
+	./debbuger_bp test_program (Entry point address)
 	
 To clean everything:
 
 	make clean
 	
-To make everything:
+To make all:
 
 	make all

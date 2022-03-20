@@ -11,6 +11,8 @@ int main(int argc, char **argv, char ** envp)
 	int i;
 
 	printf("\n");
+	printf("************************************************************************* \n");
+	printf("\n");
 	printf("********************   The environment variables:    ******************** \n");
 	printf("\n");
 	while(*envp)
@@ -20,6 +22,9 @@ int main(int argc, char **argv, char ** envp)
 	}
 
 	printf("LOL = %s\n", getenv("LOL"));
+	printf("\n");
+	printf("************************************************************************* \n");
+	printf("\n");
 	
 	return 0;
 }

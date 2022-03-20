@@ -1,6 +1,6 @@
 /*********************************************************************************************/
-/* This code enables the user to list the loaded libraries when running a C program in Linux */
-/* It shows the path of the loaded libraries and the ELF Header addresses seg of object files*/
+/* This code enables the user to list the loaded objects when running a C program in Linux   */
+/* It shows the path of the loaded objects and the ELF Header addresses seg of object files  */
 /*********************************************************************************************/
 #define _GNU_SOURCE
 #include <link.h>
@@ -28,8 +28,11 @@ int main(int argc, char *argv[]) {
 	printf("\n");
 	printf("************************************************************************* \n");
 	printf("\n");
-	printf("***********************     Loaded Libraries:     *********************** \n");
+	printf("***********************   Loaded Shared Objects:  *********************** \n");
 	printf("\n");
 	dl_iterate_phdr(print, NULL); //dl_iterate_phdr - walk through list of shared objects 
+	printf("\n");
+	printf("************************************************************************* \n");
+	printf("\n");
 	return 0;
 }
