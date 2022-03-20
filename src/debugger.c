@@ -18,31 +18,44 @@
 #include "debugger.h"
 
 //---------------- struct of tracer ----------------
+static void handle_signal(int signum)
+{
+  signal (signum, SIG_DFL);
+  printf("------------------ Signal received --------------\n\n");
+  psignal (signum, "The signal received");
+  printf("-------------------------------------------------\n\n");
+  
+} 
 
+
+//Dispaly pid of child and parent
 void display(const char* format, ...)
 {
     va_list ap;
+    //To dispaly pid of child and parent
     fprintf(stdout, "[%d] ", getpid());
     va_start(ap, format);
     vfprintf(stdout, format, ap);
     va_end(ap);
 }
 
+
+//################### Backtrace function ########################
 static void backtrace2(pid_t pid2){
     
     printf("------------------Backtrace startred --------------\n\n");
     
-    void *array[500];
+    void *array[600];
     size_t size;
 
-    size = backtrace(array, 500);
+    size = backtrace(array, 5600);
 
     backtrace_symbols_fd(array, size, STDERR_FILENO);
     printf("-------------------------------------------------\n");
 }
 
 
-
+//################# Runing child (tracee) ######################
 void function_child(const char *path, char *const argv[])
 {
   printf("\n");
@@ -56,7 +69,7 @@ void function_child(const char *path, char *const argv[])
 
 void function_debugger(pid_t pid, uint64_t adresse)
 {
-  
+  /*
 wait(0);
     siginfo_t info;
     ptrace(PTRACE_GETSIGINFO, pid, 0, &info);
@@ -79,49 +92,38 @@ wait(0);
     }
     printf("-------------------------------------------------\n");
     ptrace(PTRACE_CONT, pid, 0, 0);
-  
-    display("debugger started\n\n");
-    backtrace2(pid);
-
-
+  */
+    
     int wait_status;
     struct user_regs_struct regs;
-    //procmsg("debugger started\n");
+    
+    display("debugger started\n\n");
+    wait(&wait_status);
+    
     ptrace(PTRACE_GETREGS, pid, 0, &regs);
     printf("\n");
     printf("-------------------------------------------------\n");
-    //display("child now at RIP = \n", regs.rip);
+    /* See where the child is now */
+    display("child now at EIP = %p\n", regs.rip);
    
-
-    /* Wait for child to stop on its first instruction */
-    wait(&wait_status);
-
-    /* Obtain and show child's instruction pointer */
-    ptrace(PTRACE_GETREGS, pid, 0, &regs);
-
     /* Look at the word at the address we're interested in */
     long data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
-
+    display("Original data at %p: %p\n", adresse, data);
+    
     breakpoint_start(pid,adresse,data,wait_status);
     
     /* See where the child is now */
     ptrace(PTRACE_GETREGS, pid, 0, &regs);
-    //procmsg("Child stopped at EIP = %p\n", regs.rip);
-
-    /* Remove the breakpoint by restoring the previous data
-    ** at the target address, and unwind the EIP back by 1 to 
-    ** let the CPU execute the original instruction that was 
-    ** there.
-    */
+    display("Child stopped at RIP = %p\n", regs.rip);
 
     breakpoint_false(pid, adresse,data);
 
     /* The child can continue running now */
     breakpoint_resume(pid,wait_status);
-
-
+     
+    /* Trace function */
+    backtrace2(pid);
 }
-
 
 
 void dbugging_exec(const char *path,const char *path2, char *const argv[])
@@ -131,6 +133,9 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
   if (child==0) 
     function_child(path, argv);
   else if (child> 0){
+      for (int i = 0; i < NSIG; i++){
+      signal (i, handle_signal);
+      }
     uint64_t adresse = (uint64_t) strtol(path2, NULL, 16);
     function_debugger(child, adresse);
     }
@@ -142,7 +147,6 @@ void dbugging_exec(const char *path,const char *path2, char *const argv[])
 
 int main(int argc, char** argv)
 {
-
 
 if (argc < 3) {
         fprintf(stderr, "<program name> --<breakpoint adress> \n");
