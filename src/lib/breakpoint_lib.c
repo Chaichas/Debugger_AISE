@@ -21,7 +21,7 @@ void breakpoint_start(pid_t pid, uint64_t adresse, long data,int  _wait){
 
     /* See what's there again... */
     long readback_data = ptrace(PTRACE_PEEKTEXT, pid, (void*)adresse, 0);
-    printf("After trap data at %ld: %ld\n", adresse, readback_data);
+    display("After trap data at %p: %p\n", adresse, readback_data);
 
     /* Let the child run to the breakpoint and wait for it to
     ** reach it 
