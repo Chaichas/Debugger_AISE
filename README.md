@@ -24,9 +24,13 @@ To test the debugger, two test programs have been chosen, which are:
 	
 The project is build using a Makefile. The different commands are described hereunder.
 
+To display the shared objects in the executed program:
+
+	make Run_show_Object
+	
 To display the shared libraries in the executed program:
 
-	make Run_show_library
+	make Run_show_Lib
 	
 To display the environment variables for a C program:
 
