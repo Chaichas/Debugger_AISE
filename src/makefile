@@ -63,4 +63,4 @@ check: debugger.c test_main.c
 .PHONY: clean
 
 clean:
-	rm -Rf *~  debbuger_bp Run_Breakpoint test_program Run_show_Object Run_Display_Function_Name showObject displayNameFunction Var_Environment envp Run_show_reg *.a *.g *.o
+	rm -Rf *~  debbuger_bp Run_Breakpoint test_program Run_show_Object Run_Display_Function_Name showObject displayNameFunction Var_Environment envp Run_show_reg test_main *.a *.g *.o
